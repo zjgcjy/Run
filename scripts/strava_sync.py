@@ -4,6 +4,7 @@ import json
 from config import JSON_FILE, SQL_FILE, TCX_FOLDER
 from generator import Generator
 
+
 def strava_to_tcx(act_l):
     import os
     from requests import get
@@ -23,6 +24,7 @@ def strava_to_tcx(act_l):
             with open(fname, 'wb') as f:
                 f.write(ret.content)
 
+
 def run_strava_sync(client_id, client_secret, refresh_token, tcx=False):
     generator = Generator(SQL_FILE)
     generator.set_strava_config(client_id, client_secret, refresh_token)
@@ -32,7 +34,7 @@ def run_strava_sync(client_id, client_secret, refresh_token, tcx=False):
     activities_list = generator.load()
     if tcx:
         strava_to_tcx(activities_list)
-    
+
     with open(JSON_FILE, "w") as f:
         json.dump(activities_list, f)
 
