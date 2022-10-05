@@ -1,9 +1,27 @@
 import argparse
 import json
 
-from config import JSON_FILE, SQL_FILE
+from config import JSON_FILE, SQL_FILE, TCX_FOLDER
 from generator import Generator
 
+def strava_to_tcx(act_l):
+    import os
+    from requests import get
+    print('')
+    for i in act_l:
+        try:
+            id = i['run_id']
+        except NameError as e:
+            continue
+        fname = os.path.join(TCX_FOLDER, f'{id}.tcx')
+        if os.path.exists(fname):
+            continue
+        url = f'https://www.strava.com/activities/{id}/export_tcx'
+        ret = requests.get(url)
+        if ret.status_code == 200:
+            print('download from ' + url)
+            with open(fname, 'wb') as f:
+                f.write(ret.content)
 
 def run_strava_sync(client_id, client_secret, refresh_token):
     generator = Generator(SQL_FILE)
@@ -12,6 +30,8 @@ def run_strava_sync(client_id, client_secret, refresh_token):
     generator.sync(False)
 
     activities_list = generator.load()
+    strava_to_tcx(activities_list)
+    
     with open(JSON_FILE, "w") as f:
         json.dump(activities_list, f)
 
