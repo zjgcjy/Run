@@ -17,7 +17,7 @@ def strava_to_tcx(act_l):
         if os.path.exists(fname):
             continue
         url = f'https://www.strava.com/activities/{id}/export_tcx'
-        ret = requests.get(url)
+        ret = get(url)
         if ret.status_code == 200:
             print('download from ' + url)
             with open(fname, 'wb') as f:
