@@ -125,10 +125,15 @@ jobs:
           python scripts/gen_svg.py --from-db --title "${{ env.TITLE_GRID }}" --type grid --athlete "${{ env.ATHLETE }}" --output assets/grid.svg --min-distance "${{ env.MIN_GRID_DISTANCE }}" --special-distance 5 --special-color yellow --special-distance2 10 --special-color2 red --use-localtime
           python scripts/gen_svg.py --from-db --title "$(date +"%Y") Running" --year $(date +"%Y") --type github --athlete "${{ env.ATHLETE }}" --output assets/github_$(date +"%Y").svg --min-distance "${{ env.MIN_GRID_DISTANCE }}" --special-distance 5 --special-color yellow --special-distance2 10 --special-color2 red --language zh_CN --use-localtime 
 
+      - name: set time
+        run: |
+          NOW_TIME="$(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S')"
+          echo "TIME=$NOW_TIME" >> $GITHUB_ENV
+
       - name: Push new runs
         run: |
           git config --local user.email "${{ env.GITHUB_EMAIL }}"
           git config --local user.name "${{ env.GITHUB_NAME }}"
           git add .
-          git commit -m 'update new running record' || echo "nothing to commit"
+          git commit -m 'chore: add new running record on "${{ env.TIME }}" ' || echo "nothing to commit"
           git push || echo "nothing to push"
